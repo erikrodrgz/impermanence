@@ -320,11 +320,14 @@ in
             systemctl = "XDG_RUNTIME_DIR=\${XDG_RUNTIME_DIR:-/run/user/$(id -u)} ${config.systemd.user.systemctlPath}";
           in
           ''
+            echo "Criando diretorios" 
             mkdir -p ${targetDir}
             mkdir -p ${mountPoint}
 
             if ${mount} | grep -F ${mountPoint}' ' >/dev/null; then
+            echo "primeiro if"
                 if ! ${mount} | grep -F ${mountPoint}' ' | grep -F bindfs; then
+                echo "segundo if"
                     if ! ${mount} | grep -F ${mountPoint}' ' | grep -F ${targetDir}' ' >/dev/null; then
                         # The target directory changed, so we need to remount
                         echo "remounting ${mountPoint}"
@@ -334,8 +337,10 @@ in
                     fi
                 fi
             elif ${mount} | grep -F ${mountPoint}/ >/dev/null; then
+            echo "terceiro if"
                 echo "Something is mounted below ${mountPoint}, not creating bind mount to ${targetDir}" >&2
             else
+            echo "senao"
                 ${bindfs} ${targetDir} ${mountPoint}
                 mountedPaths[${mountPoint}]=1
             fi
