@@ -311,7 +311,7 @@ in
                 dir;
             targetDir = escapeShellArg (concatPaths [ persistentStoragePath dir ]);
             mountPoint = escapeShellArg (concatPaths [ config.home.homeDirectory mountDir ]);
-            Options = concatStringsSep "," (
+            bindfsOptions = concatStringsSep "," (
               optional (!cfg.${persistentStoragePath}.allowOther) "no-allow-other"
               ++ optional (versionAtLeast pkgs.bindfs.version "1.14.9") "fsname=${targetDir}"
             );
