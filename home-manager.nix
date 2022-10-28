@@ -332,7 +332,7 @@ in
                         # The target directory changed, so we need to remount
                         echo "remounting ${mountPoint}"
                         ${systemctl} --user stop bindMount-${sanitizeName targetDir}
-                        ${bindfs} ${targetDir} ${mountPoint}
+                        ${bindfs} -d ${targetDir} ${mountPoint}
                         mountedPaths[${mountPoint}]=1
                     fi
                 fi
