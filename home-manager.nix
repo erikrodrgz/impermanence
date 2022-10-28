@@ -11,7 +11,7 @@ let
   isBindfs = v: (getDirMethod v) == "bindfs";
   isSymlink = v: (getDirMethod v) == "symlink";
 
-  inherit (pkgs.callPackage ./lib.nix { }) splitPath dirListToPath concatPaths sanitizeName;
+  inherit (pkgs.callPackage ./lib.nix { }) splitPath d/irListToPath concatPaths sanitizeName;
 
   mount = "${pkgs.util-linux}/bin/mount";
   unmountScript = mountPoint: tries: sleep: ''
@@ -341,7 +341,7 @@ in
                 echo "Something is mounted below ${mountPoint}, not creating bind mount to ${targetDir}" >&2
             else
             echo "senao"
-                ${bindfs} ${targetDir} ${mountPoint}
+                exec ${bindfs} ${targetDir} ${mountPoint}
                 mountedPaths[${mountPoint}]=1
             fi
           '';
