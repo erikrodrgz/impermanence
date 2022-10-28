@@ -311,12 +311,12 @@ in
                 dir;
             targetDir = escapeShellArg (concatPaths [ persistentStoragePath dir ]);
             mountPoint = escapeShellArg (concatPaths [ config.home.homeDirectory mountDir ]);
-            bindfsOptions = concatStringsSep "," (
+            Options = concatStringsSep "," (
               optional (!cfg.${persistentStoragePath}.allowOther) "no-allow-other"
               ++ optional (versionAtLeast pkgs.bindfs.version "1.14.9") "fsname=${targetDir}"
             );
             bindfsOptionFlag = optionalString (bindfsOptions != "") (" -o " + bindfsOptions);
-            bindfs = "${pkgs.bindfs}/bin/bindfs" + bindfsOptionFlag;
+            bindfs = "${pkgs.bindfs}/bin/bindfs -d" + bindfsOptionFlag;
             systemctl = "XDG_RUNTIME_DIR=\${XDG_RUNTIME_DIR:-/run/user/$(id -u)} ${config.systemd.user.systemctlPath}";
           in
           ''
@@ -332,7 +332,7 @@ in
                         # The target directory changed, so we need to remount
                         echo "remounting ${mountPoint}"
                         ${systemctl} --user stop bindMount-${sanitizeName targetDir}
-                        ${bindfs} -d ${targetDir} ${mountPoint}
+                        ${bindfs} ${targetDir} ${mountPoint}
                         mountedPaths[${mountPoint}]=1
                     fi
                 fi
@@ -341,7 +341,7 @@ in
                 echo "Something is mounted below ${mountPoint}, not creating bind mount to ${targetDir}" >&2
             else
             echo "senao"
-                exec ${bindfs} ${targetDir} ${mountPoint}
+                ${bindfs} ${targetDir} ${mountPoint}
                 mountedPaths[${mountPoint}]=1
             fi
           '';
